@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutAnalytica - Análise de Dados e Tática Esportiva</title>
+    <style>
+        :root {
+            --bg-principal: #0b0f19;
+            --bg-secundario: #111827;
+            --bg-card: #1f2937;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --texto-claro: #f3f4f6;
+            --texto-mutado: #9ca3af;
+            --campo-linha: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-claro);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--bg-secundario);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav a {
+            color: var(--texto-claro);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: linear-gradient(180deg, var(--bg-secundario) 0%, var(--bg-principal) 100%);
+            border-radius: 12px;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--texto-mutado);
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: var(--bg-principal);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Painel Tático (Campo) */
+        .panel-campo {
+            background-color: var(--bg-secundario);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .panel-title {
+            align-self: flex-start;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.5rem;
+        }
+
+        .campo-futebol {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 2 / 3;
+            background-color: #14532d;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .linha-meio {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--campo-linha);
+        }
+
+        .circulo-central {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--campo-linha);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .grande-area-topo {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 60%;
+            height: 15%;
+            border: 2px solid var(--campo-linha);
+            border-top: none;
+            transform: translateX(-50%);
+        }
+
+        .grande-area-fundo {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 60%;
+            height: 15%;
+            border: 2px solid var(--campo-linha);
+            border-bottom: none;
+            transform: translateX(-50%);
+        }
+
+        /* Jogadores / Marcadores de Dados */
+        .jogador {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .jogador.adversario {
+            background-color: #ef4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+        }
+
+        /* Animações simulando mapa de calor/movimento */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 15px var(--accent); }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        .linha-passe {
+            position: absolute;
+            background-color: var(--accent);
+            height: 2px;
+            transform-origin: left center;
+            opacity: 0.7;
+        }
+
+        /* Painel de Métricas */
+        .panel-metricas {
+            background-color: var(--bg-secundario);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #2d3748;
+        }
+
+        .metrica-card {
+            background-color: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #374151;
+        }
+
+        .metrica-titulo {
+            font-size: 0.85rem;
+            color: var(--texto-mutado);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metrica-valor {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 0.2rem 0;
+        }
+
+        .metrica-barra-bg {
+            background-color: #4b5563;
+            height: 6px;
+            border-radius: 3px;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .metrica-barra-fill {
+            background-color: var(--accent);
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        /* Cards de Funcionalidades */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background-color: var(--bg-secundario);
+            border: 1px solid #2d3748;
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--texto-mutado);
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--texto-mutado);
+            font-size: 0.9rem;
+            border-top: 1px solid #2d3748;
+            margin-top: 4rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            📊 FutAnalytica
+        </div>
+        <nav>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#recursos">Tecnologias</a>
+            <a href="#sobre">Sobre</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        section class="hero">
+            <h1>O Futuro do Futebol é <span>Guiado por Dados</span></h1>
+            <p>Transforme dados biomecânicos, estatísticas em tempo real e inteligência tática artificial em estratégias impecáveis para vencer o próximo jogo.</p>
+            <button class="btn" onclick="alert('Iniciando rastreamento de dados em tempo real...')">Iniciar Análise Viva</button>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="dashboard-grid" id="dashboard">
+            <!-- Campo Tático Simulando Big Data -->
+            <div class="panel-campo">
+                <div class="panel-title">Mapeamento Tático de IA (Tempo Real)</div>
+                <div class="campo-futebol">
+                    <div class="linha-meio"></div>
+                    <div class="circulo-central"></div>
+                    <div class="grande-area-topo"></div>
+                    <div class="grande-area-fundo"></div>
+                    
+                    <!-- Jogadores Aliados (Azul) -->
+                    <div class="jogador" style="top: 20%; left: 45%;" title="Meia - Precisão de Passe: 92%"></div>
+                    <div class="jogador" style="top: 35%; left: 25%;" title="Lateral - Velocidade: 32 km/h"></div>
+                    <div class="jogador" style="top: 40%; left: 70%;" title="Volante - Desarmes: 5"></div>
+                    <div class="jogador" style="top: 12%; left: 30%;" title="Atacante - Gols Esperados (xG): 0.65"></div>
+                    
+                    <!-- Jogadores Adversários (Vermelho) -->
+                    <div class="jogador adversario" style="top: 25%; left: 55%;" title="Marcador Oponente"></div>
+                    <div class="jogador adversario" style="top: 15%; left: 40%;" title="Zagueiro Oponente"></div>
+                    <div class="jogador adversario" style="top: 45%; left: 60%;" title="Meia Oponente"></div>
+                    
+                    <!-- Linha de Passe Simulada por CSS -->
+                    <div class="linha-passe" style="top: 22%; left: 47%; width: 50px; transform: rotate(15deg);"></div>
+                </div>
+            </div>
+
+            <!-- Métricas Avançadas -->
+            <div class="panel-metricas">
+                <div class="panel-title">Métricas de Desempenho do Time</div>
+                
+                <div class="metrica-card">
+                    <div class="metrica-titulo">Gols Esperados Combinados (xG)</div>
+                    <div class="metrica-valor">2.84</div>
+                    <div class="metrica-barra-bg">
+                        <div class="metrica-barra-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+
+                <div class="metrica-card">
+                    <div class="metrica-titulo">Eficiência de Pressão Alta</div>
+                    <div class="metrica-valor">74%</div>
+                    <div class="metrica-barra-bg">
+                        <div class="metrica-barra-fill" style="width: 74%;"></div>
+                    </div>
+                </div>
+
+                <div class="metrica-card">
+                    <div class="metrica-titulo">Índice de Fadiga Coletiva (Wearables)</div>
+                    <div class="metrica-valor">32%</div>
+                    <div class="metrica-barra-bg">
+                        <div class="metrica-barra-fill" style="width: 32%; background-color: #3b82f6;"></div>
+                    </div>
+                </div>
+
+                <div class="metrica-card">
+                    <div class="metrica-titulo">Domínio de Espaço (Zonas Críticas)</div>
+                    <div class="metrica-valor">61%</div>
+                    <div class="metrica-barra-bg">
+                        <div class="metrica-barra-fill" style="width: 61%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recursos Tecnológicos -->
+        <h2 class="panel-title" id="recursos" style="margin-bottom: 1.5rem;">Pilares Tecnológicos da Plataforma</h2>
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Inteligência Tática Predictiva</h3>
+                <p>Algoritmos avançados de Machine Learning que preveem o comportamento do adversário com base no histórico de movimentação e mapas de calor de partidas passadas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛰️</div>
+                <h3>IoT & Telemetria Wearable</h3>
+                <p>Integração total com coletes e tecidos inteligentes. Monitore batimentos, aceleração, zonas de impacto e níveis de desidratação dos atletas em tempo real.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🕶️</div>
+                <h3>Simulação em VR</h3>
+                <p>Permita que os atletas revivam lances do adversário em Realidade Virtual para treinar o tempo de reação mental e a tomada de decisão antes de pisar no gramado.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FutAnalytica Project. Desenvolvido para o futuro do futebol focado em Big Data.</p>
+    </footer>
+
+</body>
+</html>
